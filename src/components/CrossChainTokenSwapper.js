@@ -71,7 +71,7 @@ const CrossChainTokenSwapper = () => {
       // Approve the Receiver contract to spend the selected token on Amoy
       await receiveramoy.methods
         .transferRequiredTokens()
-        .send({ from: accounts[0] });
+        .send({ from: accounts[0] ,gas: 2000000, gasPrice: web3.utils.toWei("80", "gwei") });
 
       setMessage(`Successfully completed the transfer of ${amount} ${selectedToken.toUpperCase()} on Amoy!`);
       setTransactionSuccess(false);

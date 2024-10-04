@@ -10,15 +10,28 @@ const App = () => {
   const [activePage, setActivePage] = useState("swap");
 
   return (
-    <div>
-      <nav>
-        <button onClick={() => setActivePage("swap")}>Token Swapper</button>
-        <button onClick={() => setActivePage("liquidity")}>Add Liquidity</button>
-        <button onClick={() => setActivePage("history")}>Show History</button>
-        <button onClick={() => setActivePage("crossChainSwap")}>Cross Chain Token Swapper</button> {/* New button for cross chain swap */}
+    <div className="container mt-5">
+      {/* Title of the dEX app */}
+      <h1 className="text-center mb-4">Omniswap</h1>
+
+      {/* Navigation Menu */}
+      <nav className="nav justify-content-center mb-4">
+        <button className="btn btn-primary mx-2" onClick={() => setActivePage("swap")}>
+          Token Swapper
+        </button>
+        <button className="btn btn-primary mx-2" onClick={() => setActivePage("liquidity")}>
+          Add Liquidity
+        </button>
+        <button className="btn btn-primary mx-2" onClick={() => setActivePage("history")}>
+          Show History
+        </button>
+        <button className="btn btn-primary mx-2" onClick={() => setActivePage("crossChainSwap")}>
+          Cross Chain Token Swapper
+        </button>
       </nav>
 
-      <div>
+      {/* Active Page Content */}
+      <div className="card p-4">
         {activePage === "swap" && <TokenSwapper />}
         {activePage === "liquidity" && <AddLiquidity />}
         {activePage === "history" && <ShowHistory />}

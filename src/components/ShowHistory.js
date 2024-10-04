@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import web3 from "./web3";
-import tokenswapper from "./contracts/tokenswapper";
+import tokenswapperfuji from "./contracts/Fuji/tokenswapper_fuji";
+
+const tokenswapper = tokenswapperfuji;
 
 const ShowHistory = () => {
   const [swapHistory, setSwapHistory] = useState([]);
@@ -12,20 +14,19 @@ const ShowHistory = () => {
     setError("");
 
     try {
-
       const formattedHistory = [];
       const count = await tokenswapper.methods.getSwapCount().call();
 
       for (let i = 0; i < count; i++) {
         const swap = await tokenswapper.methods.swapHistory(i).call();
         formattedHistory.push({
-          user: swap[0],  // user address
-          tokenIn: swap[1],  // tokenIn address
-          tokenOut: swap[2],  // tokenOut address
-          amountIn: web3.utils.fromWei(swap[3].toString(), "ether") , // Convert amountIn from Wei to Ether
-          amountOut: web3.utils.fromWei(swap[4].toString(), "ether"),  // Convert amountOut from Wei to Ether
-          timestamp: swap[5].toString() // Convert Unix timestamp to human-readable date
-      });
+          user: swap[0], // user address
+          tokenIn: swap[1], // tokenIn address
+          tokenOut: swap[2], // tokenOut address
+          amountIn: web3.utils.fromWei(swap[3].toString(), "ether"), // Convert amountIn from Wei to Ether
+          amountOut: web3.utils.fromWei(swap[4].toString(), "ether"), // Convert amountOut from Wei to Ether
+          timestamp: swap[5].toString(), // Convert Unix timestamp to human-readable date
+        });
       }
 
       // Set the formatted history into the state
@@ -80,6 +81,6 @@ const ShowHistory = () => {
       )}
     </div>
   );
-}
+};
 
 export default ShowHistory;

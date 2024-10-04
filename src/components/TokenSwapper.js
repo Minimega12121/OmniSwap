@@ -1,71 +1,81 @@
 import React, { useState, useEffect } from "react";
-import tokenswapper from "./contracts/tokenswapper";
+import tokenswapperfuji from "./contracts/Fuji/tokenswapper_fuji";
 import web3 from "./web3";
-import token1 from "./contracts/token1";
-import token2 from "./contracts/token2";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import token1fuji from "./contracts/Fuji/token1";
+import token2fuji from "./contracts/Fuji/token2";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const TokenSwapper = () => {
-  const [token1Balance, setToken1Balance] = useState("0");
-  const [token2Balance, setToken2Balance] = useState("0");
-  const [token1AmountForSwap, setToken1AmountForSwap] = useState("");
-  const [token2ForSwapAmount, setToken2ForSwapAmount] = useState("");
+  const [token1fujiBalance, setToken1fujiBalance] = useState("0");
+  const [token2fujiBalance, setToken2fujiBalance] = useState("0");
+  const [token1fujiAmountForSwap, setToken1fujiAmountForSwap] = useState("");
+  const [token2fujiForSwapAmount, setToken2fujiForSwapAmount] = useState("");
   const [isReversed, setIsReversed] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const token1BalanceInWei = await token1.methods
-        .balanceOf(tokenswapper.options.address)
+      const token1fujiBalanceInWei = await token1fuji.methods
+        .balanceOf(tokenswapperfuji.options.address)
         .call();
-      const token2BalanceInWei = await token2.methods
-        .balanceOf(tokenswapper.options.address)
+      const token2fujiBalanceInWei = await token2fuji.methods
+        .balanceOf(tokenswapperfuji.options.address)
         .call();
 
-      setToken1Balance(web3.utils.fromWei(token1BalanceInWei, "ether").toString());
-      setToken2Balance(web3.utils.fromWei(token2BalanceInWei, "ether").toString());
+      setToken1fujiBalance(
+        web3.utils.fromWei(token1fujiBalanceInWei, "ether").toString()
+      );
+      setToken2fujiBalance(
+        web3.utils.fromWei(token2fujiBalanceInWei, "ether").toString()
+      );
     };
 
     fetchData();
-  }, [token1AmountForSwap, token2ForSwapAmount]);
+  }, [token1fujiAmountForSwap, token2fujiForSwapAmount]);
 
   const handleAmountChange = async (e) => {
     const amount = e.target.value;
     if (isReversed) {
-      setToken2ForSwapAmount(amount);
+      setToken2fujiForSwapAmount(amount);
       if (amount !== "") {
         try {
           const amountInWei = web3.utils.toWei(amount, "ether");
-          const token1AmountInWei = await tokenswapper.methods
+          const token1fujiAmountInWei = await tokenswapperfuji.methods
             .amountNeededToSwap1to2(amountInWei)
             .call();
 
-          const token1AmountInEther = web3.utils.fromWei(token1AmountInWei, "ether");
-          setToken1AmountForSwap(token1AmountInEther);
+          const token1fujiAmountInEther = web3.utils.fromWei(
+            token1fujiAmountInWei,
+            "ether"
+          );
+          setToken1fujiAmountForSwap(token1fujiAmountInEther);
         } catch (error) {
-          console.error("Failed to fetch token1 amount:", error);
-          setToken1AmountForSwap("0");
+          console.error("Failed to fetch token1fuji amount:", error);
+          setToken1fujiAmountForSwap("0");
         }
       } else {
-        setToken1AmountForSwap("0");
+        setToken1fujiAmountForSwap("0");
       }
     } else {
-      setToken1AmountForSwap(amount);
+      setToken1fujiAmountForSwap(amount);
       if (amount !== "") {
         try {
           const amountInWei = web3.utils.toWei(amount, "ether");
-          const token2AmountInWei = await tokenswapper.methods
+          const token2fujiAmountInWei = await tokenswapperfuji.methods
             .amountNeededToSwap2to1(amountInWei)
             .call();
 
-          const token2AmountInEther = web3.utils.fromWei(token2AmountInWei, "ether");
-          setToken2ForSwapAmount(token2AmountInEther);
+          const token2fujiAmountInEther = web3.utils.fromWei(
+            token2fujiAmountInWei,
+            "ether"
+          );
+          setToken2fujiForSwapAmount(token2fujiAmountInEther);
         } catch (error) {
-          console.error("Failed to fetch token2 amount:", error);
-          setToken2ForSwapAmount("0");
+          console.error("Failed to fetch token2fuji amount:", error);
+          setToken2fujiForSwapAmount("0");
         }
       } else {
-        setToken2ForSwapAmount("0");
+        setToken2fujiForSwapAmount("0");
       }
     }
   };
@@ -77,23 +87,28 @@ const TokenSwapper = () => {
 
     try {
       if (isReversed) {
-        await token2.methods
-          .approve(tokenswapper.options.address, web3.utils.toWei(token2ForSwapAmount, "ether") * (1.5))
+        await token2fuji.methods
+          .approve(
+            tokenswapperfuji.options.address,
+            web3.utils.toWei(token2fujiForSwapAmount, "ether") * 1.5
+          )
           .send({ from: accounts[0] });
 
         setMessage("Approval successful. Swapping tokens...");
-        await tokenswapper.methods
-          .swapToken1forToken2(web3.utils.toWei(token2ForSwapAmount, "ether"))
+        await tokenswapperfuji.methods
+          .swapToken1forToken2(web3.utils.toWei(token2fujiForSwapAmount, "ether"))
           .send({ from: accounts[0], gas: 300000 });
-
       } else {
-        await token1.methods
-          .approve(tokenswapper.options.address, web3.utils.toWei(token1AmountForSwap, "ether") * (1.5))
+        await token1fuji.methods
+          .approve(
+            tokenswapperfuji.options.address,
+            web3.utils.toWei(token1fujiAmountForSwap, "ether") * 1.5
+          )
           .send({ from: accounts[0] });
 
         setMessage("Approval successful. Swapping tokens...");
-        await tokenswapper.methods
-          .swapToken2forToken1(web3.utils.toWei(token1AmountForSwap, "ether"))
+        await tokenswapperfuji.methods
+          .swapToken2forToken1(web3.utils.toWei(token1fujiAmountForSwap, "ether"))
           .send({ from: accounts[0], gas: 300000 });
       }
 
@@ -106,8 +121,8 @@ const TokenSwapper = () => {
 
   const toggleSwapDirection = () => {
     setIsReversed(!isReversed);
-    setToken1AmountForSwap("");
-    setToken2ForSwapAmount("");
+    setToken1fujiAmountForSwap("");
+    setToken2fujiForSwapAmount("");
   };
 
   return (
@@ -118,21 +133,38 @@ const TokenSwapper = () => {
             <div className="card-body">
               <h2 className="card-title text-center mb-4">Token Swapper</h2>
               <div className="d-flex justify-content-between">
-                <p><strong>Token 1 Balance:</strong> {token1Balance}</p>
-                <p><strong>Token 2 Balance:</strong> {token2Balance}</p>
+                <p>
+                  <strong>Token 1 Fuji Balance:</strong> {token1fujiBalance}
+                </p>
+                <p>
+                  <strong>Token 2 Fuji Balance:</strong> {token2fujiBalance}
+                </p>
               </div>
-              <button className="btn btn-primary btn-block mb-3" onClick={toggleSwapDirection}>
-                {isReversed ? "Swap Token2 for Token1" : "Swap Token1 for Token2"}
+              <button
+                className="btn btn-primary btn-block mb-3"
+                onClick={toggleSwapDirection}
+              >
+                {isReversed
+                  ? "Swap Token2 Fuji for Token1 Fuji"
+                  : "Swap Token1 Fuji for Token2 Fuji"}
               </button>
               <form onSubmit={handleSwap}>
                 <div className="form-group">
-                  <label>{isReversed ? "Amount of Token 2:" : "Amount of Token 1:"}</label>
+                  <label>
+                    {isReversed ? "Amount of Token 2 Fuji:" : "Amount of Token 1 Fuji:"}
+                  </label>
                   <input
                     type="number"
                     className="form-control"
-                    value={isReversed ? token2ForSwapAmount : token1AmountForSwap}
+                    value={
+                      isReversed ? token2fujiForSwapAmount : token1fujiAmountForSwap
+                    }
                     onChange={handleAmountChange}
-                    placeholder={isReversed ? "Enter Token 2 amount" : "Enter Token 1 amount"}
+                    placeholder={
+                      isReversed
+                        ? "Enter Token 2 Fuji amount"
+                        : "Enter Token 1 Fuji amount"
+                    }
                     required
                   />
                 </div>
@@ -140,12 +172,14 @@ const TokenSwapper = () => {
                   Swap
                 </button>
               </form>
-              {message && <div className="alert alert-info mt-3">{message}</div>}
-              {(token1AmountForSwap || token2ForSwapAmount) && (
+              {message && (
+                <div className="alert alert-info mt-3">{message}</div>
+              )}
+              {(token1fujiAmountForSwap || token2fujiForSwapAmount) && (
                 <p className="mt-3 text-center">
                   {isReversed
-                    ? `Token 1 You Will Receive: ${token1AmountForSwap}`
-                    : `Token 2 You Will Receive: ${token2ForSwapAmount}`}
+                    ? `Token 1 Fuji You Will Receive: ${token1fujiAmountForSwap}`
+                    : `Token 2 Fuji You Will Receive: ${token2fujiForSwapAmount}`}
                 </p>
               )}
             </div>

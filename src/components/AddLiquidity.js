@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import web3 from "./web3";
-import token1 from "./contracts/token1";
-import token2 from "./contracts/token2";
-import tokenswapper from "./contracts/tokenswapper";
+import token1fuji from "./contracts/Fuji/token1";
+import token2fuji from "./contracts/Fuji/token2";
+import tokenswapperfuji from "./contracts/Fuji/tokenswapper_fuji";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+const token1 = token1fuji;
+const token2 = token2fuji;
+const tokenswapper = tokenswapperfuji;
 
 const AddLiquidity = () => {
   const [token1AmountLiquidity, setToken1AmountLiquidity] = useState("");
@@ -143,7 +147,9 @@ const AddLiquidity = () => {
 
                 <button
                   type="submit"
-                  className={`btn btn-primary btn-block ${loading ? "disabled" : ""}`}
+                  className={`btn btn-primary btn-block ${
+                    loading ? "disabled" : ""
+                  }`}
                   disabled={loading} // Disable button while loading
                 >
                   {loading ? "Adding Liquidity..." : "Add Liquidity"}
