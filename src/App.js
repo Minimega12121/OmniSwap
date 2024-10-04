@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import TokenSwapper from "./components/TokenSwapper";
+import AddLiquidity from "./components/AddLiquidity";
+import ShowHistory from "./components/ShowHistory";
+import CrossChainTokenSwapper from "./components/CrossChainTokenSwapper"; // Import the new Cross Chain Token Swapper component
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';  // Include custom CSS for dark mode
 
-function App() {
+const App = () => {
+  const [activePage, setActivePage] = useState("swap");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <nav>
+        <button onClick={() => setActivePage("swap")}>Token Swapper</button>
+        <button onClick={() => setActivePage("liquidity")}>Add Liquidity</button>
+        <button onClick={() => setActivePage("history")}>Show History</button>
+        <button onClick={() => setActivePage("crossChainSwap")}>Cross Chain Token Swapper</button> {/* New button for cross chain swap */}
+      </nav>
+
+      <div>
+        {activePage === "swap" && <TokenSwapper />}
+        {activePage === "liquidity" && <AddLiquidity />}
+        {activePage === "history" && <ShowHistory />}
+        {activePage === "crossChainSwap" && <CrossChainTokenSwapper />} {/* Show Cross Chain Token Swapper Page */}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
